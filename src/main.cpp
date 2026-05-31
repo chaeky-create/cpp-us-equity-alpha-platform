@@ -5,6 +5,8 @@
 #include "RankingEngine.hpp"
 #include "PortfolioEngine.hpp"
 #include "Backtester.hpp"
+#include "WalkForwardEngine.hpp"
+#include "GridSearchEngine.hpp"
 
 #include <iostream>
 #include <cmath>
@@ -169,6 +171,51 @@ int main() {
         << "\nCumulative Return = "
         << result.cumulative_return
         << "\n";
+
+    std::cout << "Annual Return = " << result.annual_return << "\n";
+    std::cout << "Annual Volatility = " << result.annual_volatility << "\n";
+    std::cout << "Sharpe Ratio = " << result.sharpe_ratio << "\n";
+    std::cout << "Max Drawdown = " << result.max_drawdown << "\n";
+
+
+    WalkForwardEngine wf;
+
+    auto splits = wf.generate_splits(
+        2516,
+        756,
+        252
+    );
+
+    std::cout << "\nWalk-Forward Splits\n";
+
+    for (const auto& split : splits) {
+        std::cout
+            << "Train: " << split.train_start << "-" << split.train_end
+            << " | Test: " << split.test_start << "-" << split.test_end
+            << "\n";
+    }
+
+
+    GridSearchEngine grid;
+
+    std::vector<int> lookbacks = {21, 63, 126, 252, 504};
+    std::vector<double> simulated_sharpes = {0.82, 1.14, 1.47, 1.91, 1.32};
+
+    auto grid_results = grid.run(
+        lookbacks,
+        simulated_sharpes
+    );
+
+    std::cout << "\nGrid Search Results\n";
+
+    for (const auto& r : grid_results) {
+        std::cout
+            << "Lookback: "
+            << r.lookback_days
+            << " | Sharpe: "
+            << r.sharpe_ratio
+            << "\n";
+    }
 
     return 0;
 }
