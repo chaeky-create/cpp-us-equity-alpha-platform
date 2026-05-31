@@ -4,55 +4,57 @@
 #include <sstream>
 #include <stdexcept>
 
-std::vector<PriceBar> DataLoader::load_csv(const std::string& filepath, const std::string& ticker) const {
+std::vector<PriceBar> DataLoader::load_csv(const std::string& filepath) const {
+
     std::ifstream file(filepath);
 
     if (!file.is_open()) {
-        throw std::runtime_error("Could not open file: " + filepath);
+        throw std::runtime_error("Cannot open file");
     }
 
-    std::vector<PriceBar> data;
     std::string line;
 
-    std::getline(file, line); // header
+    std::getline(file, line);
+    std::getline(file, line);
+    std::getline(file, line);
 
-    double previous_adjusted_close = 0.0;
-    bool has_previous = false;
+    std::vector<PriceBar> data;
+
+    double previous_close = 0.0;
 
     while (std::getline(file, line)) {
+
         std::stringstream ss(line);
-        std::string field;
-        std::vector<std::string> fields;
 
-        while (std::getline(ss, field, ',')) {
-            fields.push_back(field);
-        }
+        std::string date;
+        std::string close;
+        std::string high;
+        std::string low;
+        std::string open;
+        std::string volume;
 
-        if (fields.size() < 6) {
-            continue;
-        }
+        std::getline(ss, date, ',');
+        std::getline(ss, close, ',');
+        std::getline(ss, high, ',');
+        std::getline(ss, low, ',');
+        std::getline(ss, open, ',');
+        std::getline(ss, volume, ',');
 
         PriceBar bar;
-        bar.date = fields[0];
-        bar.ticker = ticker;
-        bar.open = std::stod(fields[1]);
-        bar.high = std::stod(fields[2]);
-        bar.low = std::stod(fields[3]);
-        bar.close = std::stod(fields[4]);
-        bar.adjusted_close = std::stod(fields[5]);
 
-        if (fields.size() >= 7) {
-            bar.volume = std::stoll(fields[6]);
+        bar.date = date;
+        bar.close = std::stod(close);
+        bar.high = std::stod(high);
+        bar.low = std::stod(low);
+        bar.open = std::stod(open);
+        bar.volume = std::stod(volume);
+
+        if (previous_close > 0.0) {
+            bar.daily_return =
+                (bar.close / previous_close) - 1.0;
         }
 
-        if (has_previous && previous_adjusted_close > 0.0) {
-            bar.daily_return = (bar.adjusted_close / previous_adjusted_close) - 1.0;
-        } else {
-            bar.daily_return = 0.0;
-        }
-
-        previous_adjusted_close = bar.adjusted_close;
-        has_previous = true;
+        previous_close = bar.close;
 
         data.push_back(bar);
     }

@@ -6,8 +6,8 @@ std::vector<double> FactorEngine::momentum(const std::vector<PriceBar>& data, in
     std::vector<double> factor(data.size(), std::numeric_limits<double>::quiet_NaN());
 
     for (std::size_t i = static_cast<std::size_t>(lookback_days); i < data.size(); ++i) {
-        const double past_price = data[i - static_cast<std::size_t>(lookback_days)].adjusted_close;
-        const double current_price = data[i].adjusted_close;
+        const double past_price = data[i - static_cast<std::size_t>(lookback_days)].close;
+        const double current_price = data[i].close;
 
         if (past_price > 0.0) {
             factor[i] = (current_price / past_price) - 1.0;

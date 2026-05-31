@@ -1,32 +1,30 @@
 #include "DataLoader.hpp"
 #include "FactorEngine.hpp"
-#include "PerformanceMetrics.hpp"
 
 #include <iostream>
-#include <vector>
+#include <cmath>
 
 int main() {
-    std::cout << "C++ US Equity Alpha Research Platform\n";
-    std::cout << "Phase 1: Project foundation initialized successfully.\n\n";
+    DataLoader loader;
+    FactorEngine factor_engine;
 
-    std::vector<double> sample_returns = {
-        0.002, -0.001, 0.003, 0.004, -0.002,
-        0.001, 0.005, -0.003, 0.002, 0.001
-    };
+    auto data = loader.load_csv("../data/raw/AAPL.csv");
 
-    PerformanceMetrics metrics;
+    auto momentum_252 = factor_engine.momentum(data, 252);
 
-    std::cout << "Sample Mean Return: "
-              << metrics.mean(sample_returns) << "\n";
+    std::cout << "Rows loaded: " << data.size() << "\n";
+    std::cout << "First date: " << data.front().date << "\n";
+    std::cout << "Last date: " << data.back().date << "\n\n";
 
-    std::cout << "Sample Volatility: "
-              << metrics.volatility(sample_returns) << "\n";
+    std::cout << "252-day Momentum Factor Sample\n";
 
-    std::cout << "Sample Sharpe Ratio: "
-              << metrics.sharpe_ratio(sample_returns) << "\n";
-
-    std::cout << "Sample Max Drawdown: "
-              << metrics.max_drawdown(sample_returns) << "\n";
+    for (std::size_t i = data.size() - 5; i < data.size(); ++i) {
+        std::cout
+            << data[i].date
+            << " | Close: " << data[i].close
+            << " | Momentum252: " << momentum_252[i]
+            << "\n";
+    }
 
     return 0;
 }
