@@ -18,6 +18,19 @@ add_executable(alpha_platform
     src/RankingEngine.cpp
     src/WalkForwardEngine.cpp
     src/GridSearchEngine.cpp
+    src/FactorLibrary.cpp
+    src/CorrelationEngine.cpp
+    src/RiskModel.cpp
+    src/TransactionCostModel.cpp
+    src/PositionSizingEngine.cpp
+    src/PortfolioOptimizer.cpp
+    src/MeanVarianceOptimizer.cpp
+    src/PortfolioRebalancer.cpp
+    src/MultiFactorAlphaModel.cpp
+    src/FactorNeutralizer.cpp
+    src/AlphaForecastEngine.cpp
+    src/AlphaDecayModel.cpp
+    src/SignalCombiner.cpp
 )
 
 target_include_directories(alpha_platform PRIVATE include)
