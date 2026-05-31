@@ -1,6 +1,12 @@
 #pragma once
 
+#include "BacktestResult.hpp"
+
+#include <vector>
+
 class Backtester {
 public:
-    void placeholder() const;
+    BacktestResult run(
+        const std::vector<double>& returns
+    ) const;
 };

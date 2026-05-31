@@ -14,6 +14,8 @@ add_executable(alpha_platform
     src/PortfolioEngine.cpp
     src/Backtester.cpp
     src/PerformanceMetrics.cpp
+    src/UniverseLoader.cpp
+    src/RankingEngine.cpp
 )
 
 target_include_directories(alpha_platform PRIVATE include)
